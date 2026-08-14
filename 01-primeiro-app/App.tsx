@@ -1,31 +1,32 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function Tela() {
+const dados = ["Bruno", "Miguel", "Vinicius", "Neymar", "Gabigol", "Brazão"];
+
+export default function App() {
   return (
-      <SafeAreaView style={ styles.container }>
-        <Text> Tela com um Botão Flutuante</Text>
-        <View style={ styles.botao_flutuante }>
-          <Text style={ styles.texto }>+</Text>
-        </View>
-      </SafeAreaView>    
+    <SafeAreaView>
+      <FlatList
+        data={dados}
+        numColumns={3}
+        keyExtractor={(item) => item.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.box}>
+            <Text>{item}</Text>
+          </View>
+        )}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-	container: { 
-		flex: 1
-	},
-	botao_flutuante: {
-	  position: 'absolute',
-	  bottom: 20,
-	  right: 20,
-	  backgroundColor: '#4A90D9',
-	  borderRadius: 30,
-	  padding: 16,
-	},
-	texto: {
-		color: '#fff'
-	}
+  box: {
+    height: 100,
+    width: 100,
+    backgroundColor: '#ddd',
+    margin: 4, 
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
 });
