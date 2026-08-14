@@ -1,26 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { View, Text, Image, TextInput, Button, Switch, ScrollView } from 'react-native';
+import { useState } from 'react';
 
-// A função "export default" significa que não precisa chamá-la posteriormente"
-export default function App() {
+export default function ComponentesDemo() {
+  const [texto, setTexto] = useState('');
+  const [ativo, setAtivo] = useState(false);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Hello World!</Text>
-      <Text style={styles.text}>Primeiro App!</Text>
-      <StatusBar style="auto" /> {/* Barra de status (Bateria, Horário) */}
-    </View>
+    <ScrollView style={{ padding: 16 }}> {/* Uma seção de Scroll, para rolar a tela */}
+    {/* "ScrollView" = <div> (uma div que scrola)  */}
+      
+      <Text style={{ fontSize: 18 }}>Texto simples</Text>
+
+      {/* Adicionando uma Imagem e estilizando */}
+      <Image 
+        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+        style={{ width: 100, height: 100 }}
+      /> 
+
+      {/* Adicionando um input */}
+      <TextInput 
+        placeholder="Digite algo"
+        value={texto}
+        onChangeText={setTexto}
+        style={{ borderWidth: 1, padding: 8, marginVertical: 8 }}
+      />
+
+      {/* Adicionando um botão tradicional com alert */}
+      <Button title="Confirmar" onPress={() => alert("Texto digitado: " + texto)} /> 
+
+      <Switch value={ativo} onValueChange={setAtivo} />
+    </ScrollView>
   );
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1, // Deixa a caixa flexível, ocupa espaço (Teste apagar).
-    backgroundColor: '#0f0',
-    alignItems: 'center', // Centralizando horizontalmente
-    justifyContent: 'center', // Centralizando verticlamente
-  },
-  text: {
-    fontSize: 20
-  }
-}); 
