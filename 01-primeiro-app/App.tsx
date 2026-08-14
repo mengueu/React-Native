@@ -1,34 +1,39 @@
-import { View, Text, Image, TextInput, Button, Switch, ScrollView } from 'react-native';
-import { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
-export default function ComponentesDemo() {
-  const [texto, setTexto] = useState('');
-  const [ativo, setAtivo] = useState(false);
-
+export default function Tela() {
+  {/* O "return" não permite mais de uma "View" para retornar,
+    por isso colocamos várias "Views" dentro da view pai */}
   return (
-    <ScrollView style={{ padding: 16 }}> {/* Uma seção de Scroll, para rolar a tela */}
-    {/* "ScrollView" = <div> (uma div que scrola)  */}
-      
-      <Text style={{ fontSize: 18 }}>Texto simples</Text>
+    <View style={styles.container}>
 
-      {/* Adicionando uma Imagem e estilizando */}
-      <Image 
-        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
-        style={{ width: 100, height: 100 }}
-      /> 
+      <View style={styles.cabecalho}>
+        <Text style={styles.titulo}>Meu App</Text>
+      </View>
 
-      {/* Adicionando um input */}
-      <TextInput 
-        placeholder="Digite algo"
-        value={texto}
-        onChangeText={setTexto}
-        style={{ borderWidth: 1, padding: 8, marginVertical: 8 }}
-      />
+      <View style={styles.conteudo}>
+        <Text>Conteúdo principal</Text>
+      </View>
 
-      {/* Adicionando um botão tradicional com alert */}
-      <Button title="Confirmar" onPress={() => alert("Texto digitado: " + texto)} /> 
+      <View style={styles.rodape}>
+        <Text>Rodapé</Text>
+      </View>
 
-      <Switch value={ativo} onValueChange={setAtivo} />
-    </ScrollView>
+      <View style={styles.conteudo}>
+        <Text>Conteúdo principal</Text>
+      </View>
+
+      <View style={styles.rodape}>
+        <Text>Rodapé</Text>
+      </View>
+
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  cabecalho: { height: 60, backgroundColor: '#4A90D9' },
+  conteudo: { flex: 1, padding: 16 },
+  rodape: { height: 50, backgroundColor: '#eee' },
+  titulo: { color: '#fff', fontSize: 18, padding: 16 },
+});
