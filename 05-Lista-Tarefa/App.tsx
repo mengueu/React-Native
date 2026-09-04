@@ -1,26 +1,70 @@
-import { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+/* Desafio:
+- Adicionar uma mensagem de erro visível (`Text` ou `Alert.alert`) quando o usuário tentar adicionar uma tarefa vazia, em vez de o clique simplesmente não fazer nada
+- Impedir tarefas duplicadas
+- Exibir a quantidade total de tarefas no topo da tela (ex: "Você tem 3 tarefas")
+- Adicionar uma confirmação antes de remover uma tarefa
+*/
+
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, Alert } from 'react-native';
+// Ctrl + Espaço: Importar função
+interface Tarefa {
+  id: string;
+  titulo: string;
+}
 
 export default function App() {
-
-  interface Tarefa {
-    id: string;
-    titulo: string;
-  }
-
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [novaTarefa, setNovaTarefa] = useState('');
 
   function adicionarTarefa() {
-    if (novaTarefa.trim() === '') return; // não adiciona se estiver vazio
-    
-    const tarefa = {
-      id: Date.now().toString(), // id único simples
-      titulo: novaTarefa,
+    const tituloFormatado = novaTarefa.trim();
+
+    // 1. Mensagem de erro para tarefa vazia
+    if (tituloFormatado === '') {
+      Alert.alert('Campo Vazio', 'Por favor, digite o nome de uma tarefa antes de adicionar.');
+      return;
+    }
+
+    // 2. Impedir tarefas duplicadas (Compara sem diferenciar maiúsculas/minúsculas)
+    const tarefaExiste = tarefas.some(
+      (item) => item.titulo.trim().toLowerCase() === tituloFormatado.toLowerCase()
+    );
+
+    if (tarefaExiste) {
+      Alert.alert(
+        'Tarefa Duplicada', 
+        'Esta tarefa já foi adicionada à sua lista!'
+      );
+      return;
+    }
+
+    const tarefa: Tarefa = {
+      id: Date.now().toString(),
+      titulo: tituloFormatado,
     };
 
     setTarefas([...tarefas, tarefa]);
-    setNovaTarefa(''); // limpa o TextInput depois de adicionar
+    setNovaTarefa(''); // Limpa o campo
+  }
+
+  // 4. Confirmação antes de remover
+  function confirmarRemocao(index: number, titulo: string) {
+    Alert.alert(
+      'Confirmar Exclusão',
+      `Tem certeza que deseja remover a tarefa "${titulo}"?`,
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel', // Botão padrão de cancelamento
+        },
+        {
+          text: 'Remover',
+          style: 'destructive', // Deixa em destaque/vermelho no iOS
+          onPress: () => removerTarefa(index),
+        },
+      ]
+    );
   }
 
   function removerTarefa(index: number) {
@@ -32,6 +76,13 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Minhas Tarefas</Text>
+
+      {/* 3. Exibir total de tarefas */}
+      <Text style={styles.contador}>
+        {tarefas.length === 0
+          ? 'Você não possui nenhuma tarefa'
+          : `Você tem ${tarefas.length} ${tarefas.length === 1 ? 'tarefa' : 'tarefas'}`}
+      </Text>
 
       <View style={styles.inputArea}>
         <TextInput
@@ -48,8 +99,13 @@ export default function App() {
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (
           <View style={styles.tarefaItem}>
-            <Text style={styles.tarefaTexto}>{item.titulo}{item.id}</Text>
-            <Button title="Remover" onPress={() => removerTarefa(index)} />
+            <Text style={styles.tarefaTexto}>{item.titulo}</Text>
+            {/* Chama a confirmação antes de apagar */}
+            <Button 
+              title="Remover" 
+              color="#EF4444" 
+              onPress={() => confirmarRemocao(index, item.titulo)} 
+            />
           </View>
         )}
       />
@@ -62,10 +118,17 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     paddingTop: 60,
+    backgroundColor: '#F8FAFC',
   },
   titulo: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#0F172A',
+    marginBottom: 4,
+  },
+  contador: {
+    fontSize: 16,
+    color: '#64748B',
     marginBottom: 20,
   },
   inputArea: {
@@ -73,20 +136,28 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
+    borderColor: '#CBD5E1',
+    backgroundColor: '#FFFFFF',
+    padding: 12,
     marginBottom: 10,
-    borderRadius: 5,
+    borderRadius: 8,
+    fontSize: 16,
   },
   tarefaItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    padding: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   tarefaTexto: {
     fontSize: 16,
+    color: '#334155',
+    flex: 1, // Impede que o texto empurre o botão para fora da tela caso seja muito grande
+    marginRight: 10,
   },
 });
